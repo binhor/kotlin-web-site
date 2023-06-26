@@ -1,126 +1,95 @@
-[//]: # (title: Hello world)
-
-<microformat>
-    <p><img src="icon-1.svg" width="20" alt="First step" /> <strong>Hello world</strong><br />
-        <img src="icon-2-todo.svg" width="20" alt="Second step" /> <a href="kotlin-tour-basic-types.md">Basic types</a><br />
-        <img src="icon-3-todo.svg" width="20" alt="Third step" /> <a href="kotlin-tour-collections.md">Collections</a><br />
-        <img src="icon-4-todo.svg" width="20" alt="Fourth step" /> <a href="kotlin-tour-control-flow.md">Control flow</a><br />
-        <img src="icon-5-todo.svg" width="20" alt="Fifth step" /> <a href="kotlin-tour-functions.md">Functions</a><br />
-        <img src="icon-6-todo.svg" width="20" alt="Sixth step" /> <a href="kotlin-tour-classes.md">Classes</a><br />
-        <img src="icon-7-todo.svg" width="20" alt="Final step" /> <a href="kotlin-tour-null-safety.md">Null safety</a></p>
-</microformat>
-
-Here is a simple program that prints "Hello, world!":
+Certamente! Aqui está um exemplo de código Kotlin que você pode usar como ponto de partida para implementar o design do seu aplicativo descentralizado:
 
 ```kotlin
-fun main() {
-    println("Hello, world!")
-    // Hello, world!
+// Importe as bibliotecas necessárias
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+class MainActivity : AppCompatActivity() {
+
+    // Defina as variáveis globais para os componentes de layout
+    private lateinit var recyclerViewHighlights: RecyclerView
+    private lateinit var recyclerViewMenu: RecyclerView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // Inicialize os componentes de layout
+        recyclerViewHighlights = findViewById(R.id.recyclerViewHighlights)
+        recyclerViewMenu = findViewById(R.id.recyclerViewMenu)
+
+        // Defina o layout manager e o adapter para o recyclerViewHighlights
+        recyclerViewHighlights.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        recyclerViewHighlights.adapter = HighlightsAdapter(getHighlights())
+
+        // Defina o layout manager e o adapter para o recyclerViewMenu
+        recyclerViewMenu.layoutManager = LinearLayoutManager(this)
+        recyclerViewMenu.adapter = MenuAdapter(getMenuItems())
+    }
+
+    // Método de exemplo para obter os destaques
+    private fun getHighlights(): List<HighlightItem> {
+        // Retorne uma lista de objetos HighlightItem com os dados dos destaques
+        // Implemente esta função de acordo com a estrutura de dados que você deseja usar para os destaques
+        // Exemplo:
+        return listOf(
+            HighlightItem("Destaque 1", R.drawable.highlight1),
+            HighlightItem("Destaque 2", R.drawable.highlight2),
+            HighlightItem("Destaque 3", R.drawable.highlight3)
+        )
+    }
+
+    // Método de exemplo para obter os itens do menu
+    private fun getMenuItems(): List<MenuItem> {
+        // Retorne uma lista de objetos MenuItem com os dados dos itens do menu
+        // Implemente esta função de acordo com a estrutura de dados que você deseja usar para os itens do menu
+        // Exemplo:
+        return listOf(
+            MenuItem("Menu 1", R.drawable.menu1),
+            MenuItem("Menu 2", R.drawable.menu2),
+            MenuItem("Menu 3", R.drawable.menu3)
+        )
+    }
 }
-```
-{kotlin-runnable="true" kotlin-min-compiler-version="1.3" id="hello-world-kotlin"}
 
-In Kotlin:
-* `fun` is used to declare a function
-* the `main()` function is where your program starts from
-* the body of a function is written within curly braces `{}`
-* [`println()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.io/println.html) and [`print()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.io/print.html) functions print their arguments to standard output
+// Classe de exemplo para o adaptador do recyclerViewHighlights
+class HighlightsAdapter(private val highlights: List<HighlightItem>) : RecyclerView.Adapter<HighlightsAdapter.ViewHolder>() {
 
-> Functions are discussed in more detail in a couple of chapters. Until then, all examples use the `main()` function.
-> 
-{type="note"}
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_highlight, parent, false)
+        return ViewHolder(view)
+    }
 
-## Variables
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val highlight = highlights[position]
+        holder.bind(highlight)
+    }
 
-All programs need to be able to store data, and variables help you to do just that. In Kotlin, you can declare:
-* read-only variables with `val`
-* mutable variables with `var`
+    override fun getItemCount(): Int {
+        return highlights.size
+    }
 
-To assign a value, use the assignment operator `=`.
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        fun bind(highlight: HighlightItem) {
+            // Atualize a exibição dos dados do destaque neste método
+            val highlightImageView: ImageView = itemView.findViewById(R.id.highlightImageView)
+            val highlightTitleTextView: TextView = itemView.findViewById(R.id.highlightTitleTextView)
 
-For example:
-
-```kotlin
-fun main() { 
-//sampleStart
-    val popcorn = 5    // There are 5 boxes of popcorn
-    val hotdog = 7     // There are 7 hotdogs
-    var customers = 10 // There are 10 customers in the queue
-    
-    // Some customers leave the queue
-    customers = 8
-//sampleEnd
+            highlightImageView.setImageResource(highlight.imageResId)
+            highlightTitleTextView.text = highlight.title
+        }
+    }
 }
-```
-{kotlin-runnable="true" kotlin-min-compiler-version="1.3" id="kotlin-tour-variables"}
 
-> Variables can be declared outside the `main()` function at the beginning of your program. Variables declared in this way
-> are said to be declared at **top level**.
-> 
-{type="tip"}
+// Classe de exemplo para o adaptador do recyclerViewMenu
+class MenuAdapter(private val menuItems: List<MenuItem>) : RecyclerView.Adapter<MenuAdapter.ViewHolder>() {
 
-As `customers` is a mutable variable, its value can be reassigned after declaration.
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_menu, parent, false)
+        return ViewHolder(view)
+    }
 
-> We recommend that you declare all variables as read-only (`val`) by default. Declare mutable variables (`var`) only if 
-> necessary.
-> 
-{type="note"}
-
-## String templates
-
-It's useful to know how to print the contents of variables to standard output. You can do this with **string templates**. 
-You can use template expressions to access data stored in variables and other objects, and convert them into strings.
-A string value is a sequence of characters in double quotes `"`. Template expressions always start with a dollar sign `$`.
-
-To evaluate a piece of code in a template expression, place the code within curly braces `{}` after the dollar sign `$`.
-
-For example:
-
-```kotlin
-fun main() { 
-//sampleStart
-    val customers = 10
-    println("There are $customers customers")
-    // There are 10 customers
-    
-    println("There are ${customers + 1} customers")
-    // There are 11 customers
-//sampleEnd
-}
-```
-{kotlin-runnable="true" kotlin-min-compiler-version="1.3" id="kotlin-tour-string-templates"}
-
-For more information, see [String templates](strings.md).
-
-You will notice that there aren't any types declared for variables. Kotlin has inferred the type itself: `Int`. This tour
-explains the different Kotlin basic types and how to declare them in the [next chapter](kotlin-tour-basic-types.md).
-
-## Practice
-
-### Exercise {initial-collapse-state="collapsed"}
-
-Complete the code to make the program print `"Mary is 20 years old"` to standard output:
-
-|---|---|
-```kotlin
-fun main() {
-    val name = "Mary"
-    val age = 20
-    // Write your code here
-}
-```
-{validate="false" kotlin-runnable="true" kotlin-min-compiler-version="1.3" id="kotlin-tour-hello-world-exercise"}
-
-|---|---|
-```kotlin
-fun main() {
-    val name = "Mary"
-    val age = 20
-    println("$name is $age years old")
-}
-```
-{initial-collapse-state="collapsed" collapsed-title="Example solution" id="kotlin-tour-hello-world-solution"}
-
-## Next step
-
-[Basic types](kotlin-tour-basic-types.md)
+    override fun onBindViewHolder(holder: ViewHolder, position
